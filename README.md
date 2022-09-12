@@ -1,3 +1,4 @@
+[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=8450345&assignment_repo_type=AssignmentRepo)
 # Longest increasing substring
 
 Given a sequence `x` over whatever type you can think of that has an order to it (i.e. we can compare if one element is smaller than another), we can define *increasing substrings* as a slice `x[i:j]` where each element is smaller than the following. Despite the name sub*string*, it doesn't have to be an actual string. It is just the anme for this kind of sub-sequence, where the elements are consecutive.
