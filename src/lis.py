@@ -4,10 +4,28 @@
 # They *should* be comparable, and it *is* possible to make such
 # an annotation, but it is tricky, and I don't want to confuse you
 # more than strictly necessary.
-from typing import Sequence, Any
+# https://stackoverflow.com/questions/68372599/how-to-type-hint-supportsordering-in-a-function-parameter
+from __future__ import annotations
+from re import sub
+from typing import Sequence, Any, Protocol, runtime_checkable, TypeVar
+from abc import abstractmethod
 
 
-def is_increasing(x: Sequence[Any]) -> bool:
+@runtime_checkable
+class Comparable(Protocol):
+    @abstractmethod
+    def __lt__(self: SupportsOrdering, other: SupportsOrdering) -> bool:
+        pass
+
+    @abstractmethod
+    def __eq__(self: SupportsOrdering, other: object) -> bool:
+        pass
+
+
+SupportsOrdering = TypeVar("SupportsOrdering", bound=Comparable)
+
+
+def is_increasing(x: Sequence[SupportsOrdering]) -> bool:
     """
     Determine if x is an increasing sequence.
 
@@ -33,7 +51,14 @@ def substring_length(substring: tuple[int, int]) -> int:
     return substring[1] - substring[0]
 
 
-def longest_increasing_substring(x: Sequence[Any]) -> tuple[int, int]:
+def find_increasing_upper_limit(x: Sequence[SupportsOrdering]) -> int:
+    for i, v in enumerate(x):
+        if not is_increasing(x[:i]):
+            return i
+    return i + 1
+
+
+def longest_increasing_substring(x: Sequence[SupportsOrdering]) -> tuple[int, int]:
     """
     Locate the (leftmost) longest increasing substring.
 
@@ -48,5 +73,13 @@ def longest_increasing_substring(x: Sequence[Any]) -> tuple[int, int]:
     """
     # The leftmost empty string is our first best bet
     best = (0, 0)
-    # FIXME: explore the other possibilities
+    lower, upper = best
+    for i, v in enumerate(x):
+        j = i + 1
+        if is_increasing(x[lower:j]):
+            best = (lower, j)
+        else:
+            lower = j - 1
+        if substring_length(best) >= substring_length((lower, len(x))):
+            break
     return best
